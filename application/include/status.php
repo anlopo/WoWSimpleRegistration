@@ -47,9 +47,10 @@ class status
     public static function get_top_arenateams($realmID)
     {
         $queryBuilder = database::$chars[$realmID]->createQueryBuilder();
-        $queryBuilder->select("arenaTeamId, name, captainGuid, rating")
+        $queryBuilder->select("arena_team.arenaTeamId, arena_team.name, arena_team.captainGuid, arena_team_stats.rating")
             ->from("arena_team")
-            ->orderBy("rating", "DESC")
+            ->innerJoin("arena_team", "arena_team_stats", "arena_team_stats", "arena_team.arenaTeamId = arena_team_stats.arenaTeamId")
+            ->orderBy("arena_team_stats.rating", "DESC")
             ->setMaxResults(10);
 
         $statement = $queryBuilder->executeQuery();
@@ -60,6 +61,7 @@ class status
         }
         return false;
     }
+
 
     public static function get_top_killers($realmID)
     {
